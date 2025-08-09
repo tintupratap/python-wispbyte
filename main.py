@@ -62,6 +62,19 @@ async def startup() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+    # create default user with a fixed token for testing
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import select
+        res = await session.execute(select(User).where(User.username == "test"))
+        user = res.scalars().first()
+        if not user:
+            token = "DEMO-TOKEN-123456"  # your default token
+            user = User(username="test", pwd_hash=hash_password("testpass"), token=token)
+            session.add(user)
+            await session.commit()
+            print(f"[INIT] Default user 'test' created with token: {token}")
+
+
 # Dependency to get DB session
 async def get_db():
     async with AsyncSessionLocal() as session:
