@@ -310,9 +310,8 @@ async def index():
     return HTMLResponse(INDEX_HTML)
 
 
-# main.py
-# ... (rest of the code I gave you stays the same)
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=False)
+    import uvicorn, os
+    port = int(os.environ.get("PORT", 8000))  # default to 8000 for local dev
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
